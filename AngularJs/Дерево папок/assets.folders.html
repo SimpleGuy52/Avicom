@@ -1,0 +1,135 @@
+﻿<div class="sv-form-group" cg-busy="{ promise: loadingPromiseFolders, delay: 1000 }">
+    <div class="sv-form-group-header" ng-if="!selectMode">
+        <div class="list-element">
+            <div class="cell-content">
+                <div class="name-nowrap">
+                    Дерево папок
+                </div>
+            </div>
+            <div class="cell-btns" style="width: 90px;">
+                <div class="btns-group">
+                    <button asset-folder-link
+                            parent-folder-id="{{ selectedFolder.id }}"
+                            type-of-asset="{{ typeOfAsset }}"
+                            on-after-create="onAfterCreateAFD"
+                            ng-disabled="!isEditFolder"
+                            title="Создать папку">
+                        <img src="/images/svg/button/add-w.svg"/>
+                    </button>
+                    <button asset-folder-link
+                            folder-id="{{ selectedFolder.id }}"
+                            type-of-asset="{{ typeOfAsset }}"
+                            on-after-edit="onAfterEditAFD"
+                            ng-disabled="!isEditFolder || !selectedFolder"
+                            title="Редактировать папку">
+                        <img src="/images/svg/button/edit-w.svg" />
+                    </button>
+                    <button asset-folder-link
+                            folder-id="{{ selectedFolder.id }}"
+                            folder-name="{{ selectedFolder.name }}"
+                            is-delete="true"
+                            on-after-delete="onAfterDeleteAFD"
+                            ng-disabled="!isEditFolder || !selectedFolder"
+                            title="Удалить папку">
+                        <img src="/images/svg/button/delete-w.svg" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sv-form-group-content padding-0 o-hidden" style="background: white;">
+        <div class="treeview-settings vert-px-30" 
+             style="padding: 5px; padding-bottom: 0;"
+             ng-if="assetFolders.length === 0  && !isRootFolder && !isFirstTimeRefresh">
+            <label>
+                <span>Пусто</span>
+            </label>
+        </div>
+        <div class="treeview-settings vert-px-30" 
+             style="padding: 5px; padding-bottom: 0;"
+             ng-if="assetFolders.length > 0">
+            <label>
+                <input type="checkbox" 
+                       class="checkbox" 
+                       ng-model="filter.isNested"
+                       ng-click="nestedChanged()">
+                <span>Показывать вложенные</span>
+            </label>
+        </div>
+        <div class="vert-px-30-f o-auto">
+            <div class="file-system-tree">
+                <ul class="root-ul" ng-show="isRootFolder" >
+                    <li class="tree-item">
+                        <div class="list-element folder"
+                             ng-click="selectFolder(null)"
+                             ng-class="{'selected': selectedFolder == null}">
+                            <div class="cell-btns">
+                                <img src="/images/svg/filesystem/folders/folder.svg" ng-if="selectedFolder != null" />
+                                <img src="/images/svg/filesystem/folders/folder-w.svg" ng-if="selectedFolder == null" />
+                            </div>
+                            <div class="cell-content">
+                                <div class="name-wrap">Корневой каталог</div>
+                            </div>
+                        </div>                        
+                    </li>
+                </ul>
+                <script type="text/ng-template" id="assetFoldersTree.html">
+                    <ul>
+                        <li class="tree-item" ng-repeat="item in assetFolders">
+                            <div class="list-element folder"
+                                 ng-class="{'selected': selectedFolder.id == item.id }"
+                                 ng-click="selectFolder(item)">
+                                <div class="cell-btns">
+                                    <button ng-disabled="!item.children.length">
+                                        <img src="/images/svg/filesystem/folders/folder.svg" ng-if="!item.expanded && selectedFolder.id != item.id" />
+                                        <img src="/images/svg/filesystem/folders/folder-opened.svg" ng-if="!!item.expanded && selectedFolder.id != item.id" />
+                                        <img src="/images/svg/filesystem/folders/folder-w.svg" ng-if="!item.expanded && selectedFolder.id == item.id" />
+                                        <img src="/images/svg/filesystem/folders/folder-opened-w.svg" ng-if="!!item.expanded && selectedFolder.id == item.id" />
+                                    </button>
+                                </div>
+                                <div class="cell-content">
+                                    <div class="name-wrap" ng-bind="item.name"></div>
+                                </div>
+                            </div>
+                            <div class="list-element">
+                                <div class="cell-btns"></div>
+                                <div class="cell-content">
+                                    <div ng-include=" 'assetFoldersTree.html' " 
+                                         onload="assetFolders = item.children"
+                                         ng-if="item.expanded">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </script>
+                <!--<script type="text/ng-template" id="assetFoldersTree.html">
+                    <ul role="group" style="margin: 0; overflow: hidden;">
+                        <li class="treeitem" ng-repeat="item in assetFolders" role="treeitem">
+                            <div class="list-element height-auto">
+                                <div class="cell-btns" style="width: 25px;">
+                                    <div class="tree-btn-plus" ng-click="expand(item)" ng-if="item.children.length"
+                                         style="position: relative; top: -100%;">
+                                        <i class="fa" ng-class="{'fa-plus-square-o': !item.expanded && item.children.length,
+                                                                             'fa-minus-square-o ': !!item.expanded && item.children.length }"
+                                           style="font-size: 14px;">
+                                        </i>
+                                    </div>
+                                </div>
+                                <div class="cell-content">
+                                    <div class="folder" ng-click="selectFolder(item)" ng-class="{ 'folder-selected': selectedFolder.id == item.id }">
+                                        {{ item.name }}
+                                    </div>
+                                    <div ng-include=" 'assetFoldersTree.html' " onload="assetFolders = item.children"
+                                         ng-if="item.expanded">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </script>-->
+                <div ng-include=" 'assetFoldersTree.html' "></div>
+            </div>
+        </div>
+    </div>
+</div>

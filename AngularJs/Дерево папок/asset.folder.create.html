@@ -1,0 +1,58 @@
+﻿<div class="modal-header" modal-settings draggable="true" resizable="both">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">
+        &times;
+    </button>
+    <h4 class="modal-title" ng-if="folderId === null">Новый каталог</h4>
+    <h4 class="modal-title" ng-if="folderId != null">Каталог - {{ requestFolder.name }}</h4>
+</div>
+<div class="modal-body o-auto padding-5" style="" cg-busy="{ promise : loadingPromise, delay: 1000 }">
+    <form class="size-height-full" name="incidentForm" novalidate>
+        <div class="vert-px-26">
+            <div class="input-group">
+                <div class="input-group-addon">Название</div>
+                <input type="text" name="folderName" class="form-control" ng-model="folder.folderName" ng-class="{ textbox_invalid: !validName }" autofocus />
+            </div>
+        </div>
+        <div class="vert-px-26-f padding-top-5"
+             permissions="[['Assets.ManageSecurityFolder','Assets.ManageSecurityAllFolder']]">
+            <div class="row row-col">
+                <div class="col-xs-6">
+                    <div class="vert-px-26 padding-top-5">
+                        Все роли:
+                    </div>
+                    <div class="vert-px-26-f">
+                        <div class="list-div">
+                            <ul>
+                                <li ng-repeat="role in allRoles | filter:{added:false}" ng-click="add(role); $event.stopPropagation();">
+                                    <div class="list-item">
+                                        <div class="text" ng-bind="role.name"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="col-xs-6">
+                    <div class="vert-px-26 padding-top-5">
+                        Роли данного каталога:
+                    </div>
+                    <div class="vert-px-26-f">
+                        <div class="list-div">
+                            <ul>
+                                <li ng-repeat="role in folder.selectedRoles" ng-click="remove(role); $event.stopPropagation();">
+                                    <div class="list-item">
+                                        <div class="text" ng-bind="role.name"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="save()" ng-disabled="!validName">Сохранить</button>
+    <button class="btn btn-second" ng-click="cancel()">Отмена</button>
+</div>
